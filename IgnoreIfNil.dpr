@@ -5,6 +5,7 @@
 
 uses
   System.Json.Serializers,
+  System.Json.Types,
   System.SysUtils;
 
 type
@@ -61,6 +62,7 @@ begin
   lJson := TJsonSerializer.Create;
   lBtn := TtgKeyboardButton.Create;
   try
+    lJson.Formatting := TJsonFormatting.Indented;
     lJsonString := lJson.Serialize<TtgKeyboardButton>(lBtn);
     Writeln(lJsonString);
   finally
