@@ -4,9 +4,9 @@
 {$R *.res}
 
 uses
-  System.Json.Serializers,
   System.Json.Types,
-  System.SysUtils;
+  System.Json.Serializers,
+  System.SysUtils, System.Rtti;
 
 type
 
@@ -53,6 +53,13 @@ type
     property RequestPoll: TtgKeyboardButtonPollType read FRequestPoll write FRequestPoll;
   end;
 
+  TJsonDefaultContractResolverAndIgnoreIfNil = class(TJsonDefaultContractResolver)
+
+  protected
+    function ShouldIncludeMember(const AMember: TRttiMember; AMemberSerialization: TJsonMemberSerialization)
+      : Boolean; override;
+  end;
+
 procedure Main;
 var
   lJson: TJsonSerializer;
@@ -63,6 +70,7 @@ begin
   lBtn := TtgKeyboardButton.Create;
   try
     lJson.Formatting := TJsonFormatting.Indented;
+    lJson.ContractResolver := TJsonDefaultContractResolverAndIgnoreIfNil.Create();
     lJsonString := lJson.Serialize<TtgKeyboardButton>(lBtn);
     Writeln(lJsonString);
   finally
@@ -79,6 +87,20 @@ begin
   FRequestContact := False;
   FRequestLocation := False;
   FRequestPoll := nil;
+end;
+
+{ TJsonDefaultContractResolverAndIgnoreIfNil }
+
+function TJsonDefaultContractResolverAndIgnoreIfNil.ShouldIncludeMember(const AMember: TRttiMember;
+  AMemberSerialization: TJsonMemberSerialization): Boolean;
+var
+  lField: TRttiField;
+begin
+  if AMember is TRttiField then
+  begin
+    lField := TRttiField(AMember);
+
+  end;
 end;
 
 begin
